@@ -1,0 +1,85 @@
+package personalDairy;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+
+public class PersonalDiaryViewModel {
+    private PersonalDiaryView viewModel;
+    private List<String> entries;
+
+    public PersonalDiaryViewModel(PersonalDiaryView personalDiaryView) {
+        viewModel = personalDiaryView;
+       
+    }
+
+    public void addEntry(PersonalDiaryModel model) {
+    	 String date = model.getDate();
+         String diaryEntry = model.getDiary();
+         Map<String, List<String>> allEntries = Repository.getInstance().getAllEntries();
+         if (allEntries.containsKey(date)) {
+            
+        	 allEntries.get(date).add(diaryEntry);
+         } else {
+           
+             List<String> entries = new ArrayList<>();
+             entries.add(diaryEntry);
+             allEntries.put(date, entries);
+         }
+
+         Repository.getInstance().add(date, allEntries.get(date));
+     
+
+    }
+
+    public void showEntriesByDate() {
+         Map<String, List<String>> allEntries = Repository.getInstance().getAllEntries();
+       
+        if (allEntries.isEmpty()) {
+            System.out.println("No entries found.");
+        } else {
+            System.out.println("All Entries:");
+            
+           for (Map.Entry<String, List<String>> entry : allEntries.entrySet()) {
+			String key = entry.getKey();
+			List<String> val = entry.getValue();
+			System.out.println(key);
+			 for (String entryText : val) {
+	                System.out.println(entryText);
+	            }
+			
+		}
+        }
+    }
+
+    public List<String> searchEntriesByDate(String date) {
+        return Repository.getInstance().searchEntriesByDate(date);
+    }
+    public boolean isValidDate(String dateStr, String format) {
+        SimpleDateFormat sdf = new SimpleDateFormat(format);
+        sdf.setLenient(false);
+
+        try {
+            Date date = sdf.parse(dateStr);
+            return date != null;
+        } catch (ParseException e) {
+            return false;
+        }
+    }
+    public void showSearchResults(List<String> searchResults) {
+        if (searchResults.isEmpty()) {
+            System.out.println("No matching entries found.");
+        } else {
+            System.out.println("Search Results:");
+            for (String entry : searchResults) {
+                System.out.println(entry);
+            }
+        }
+    }
+
+   
+}
+
