@@ -1,0 +1,87 @@
+package dnmn;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.Scanner;
+
+public class PersonalDiaryView {
+    private PersonalDiaryViewModel viewModel;
+
+    private static PersonalDiaryView view = new PersonalDiaryView();
+
+    public PersonalDiaryView() {
+        viewModel = new PersonalDiaryViewModel(this);
+    }
+
+    public static void main(String[] args) {
+        view.showMenu();
+        view.processUserInput();
+    }
+
+    public void processUserInput() {
+        Scanner scanner = new Scanner(System.in);
+
+        while (true) {
+            System.out.print("Choose an option: ");
+            String choice = scanner.next();
+            scanner.nextLine();
+
+            switch (choice) {
+                case "1":
+                    String inputDate;
+                    boolean isValidDate = false;
+
+                    do {
+                        System.out.print("Enter date (yyyy-mm-dd): ");
+                        inputDate = scanner.nextLine();
+
+                        if (viewModel.isValidDate(inputDate, "yyyy-MM-dd")) {
+                            isValidDate = true;
+                            System.out.println("Valid date: " + inputDate);
+                        } else {
+                            System.out.println("Invalid date format. Please enter the date in yyyy-mm-dd format.");
+                        }
+
+                    } while (!isValidDate);
+
+                    System.out.print("Enter your diary entry: ");
+                    String newEntry = scanner.nextLine();
+                    PersonalDiaryModel model = new PersonalDiaryModel(inputDate, newEntry);
+
+                    viewModel.addEntry(model);
+                    System.out.println("Entry added successfully!");
+                    break;
+
+                case "2":
+                    viewModel.showEntriesByDate();
+                    break;
+
+                case "3":
+                    System.out.print("Enter date to search (yyyy-mm-dd): ");
+                    String searchDate = scanner.nextLine();
+                    List<String> searchResults = viewModel.searchEntriesByDate(searchDate);
+                    viewModel.showSearchResults(searchResults);
+                    break;
+
+                case "4":
+                    System.out.println("Exiting Personal Diary Console. Goodbye!");
+                    scanner.close();
+                    System.exit(0);
+
+                default:
+                    System.out.println("Invalid option. Please choose again.");
+            }
+        }
+    }
+
+    public void showMenu() {
+        System.out.println("1. Add Entry");
+        System.out.println("2. View Entries ");
+        System.out.println("3. Search Entries by Date");
+        System.out.println("4. Exit");
+    }
+}
+   
