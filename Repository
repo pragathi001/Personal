@@ -1,0 +1,33 @@
+package personalDairy;
+
+import java.util.*;
+
+public class Repository {
+    private static Repository repository;
+
+    private Map<String, List<String>> diaryEntriesByDate = new HashMap<>();
+
+    private Repository() {
+    }
+
+    public static Repository getInstance() {
+        if (repository == null) {
+            repository = new Repository();
+        }
+        return repository;
+    }
+
+    public void add(String date, List<String> entries) {
+        diaryEntriesByDate.put(date, entries);
+    }
+
+    public Map<String, List<String>> getAllEntries() {
+    	return diaryEntriesByDate;
+       
+        
+    }
+
+    public List<String> searchEntriesByDate(String date) {
+        return diaryEntriesByDate.getOrDefault(date, new ArrayList<>());
+    }
+}
